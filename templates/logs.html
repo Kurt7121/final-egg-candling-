@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Egg Candling Logs</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Detection Logs / History</h1>
+      <p>Saved YOLO analyses stored in SQLite. Images are permanent JPEG files.</p>
+    </div>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a class="active" href="/logs">Logs / History</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Previous detections</h2>
+      <div class="filters">
+        <label>
+          Search by Day
+          <select id="dayFilter">
+            <option value="">All days</option>
+          </select>
+        </label>
+        <label>
+          Filter by date
+          <input id="dateFilter" type="date">
+        </label>
+        <button id="applyFilters" class="primary" type="button">Apply</button>
+        <button id="resetFilters" class="secondary" type="button">Reset</button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Image</th>
+              <th>Predicted Day</th>
+              <th>Stage</th>
+              <th>Confidence</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="logsBody">
+            <tr><td colspan="8">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <button id="prevPage" class="secondary" type="button">Previous</button>
+        <span id="pageInfo">Page 1</span>
+        <button id="nextPage" class="secondary" type="button">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="imageModal" class="modal">
+    <div class="modal-box">
+      <button id="closeModal" class="modal-close" type="button">×</button>
+      <img id="modalImage" alt="Saved egg">
+      <div id="modalCaption"></div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/logs.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chicken Egg Candling Computer Vision System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Chicken Egg Candling Computer Vision System</h1>
+      <p>Capture a candled egg and predict incubation day with a locally trained YOLO classifier</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <nav>
+        <a class="active" href="/">Dashboard</a>
+        <a href="/logs">Logs / History</a>
+      </nav>
+      <div class="status">
+        <span id="dot" class="dot"></span>
+        <span id="cameraStatus">Camera Off</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% if model_ready %}
+    <div class="banner ok">
+      Trained model loaded from {{ model_path }}. Predictions use this fine-tuned Day 1–21 classifier, not a generic pretrained YOLO model. Minimum confidence: {{ min_confidence }}%.
+    </div>
+    {% else %}
+    <div class="banner warn">
+      AI model not trained yet. Please train the model first.<br>
+      In the terminal run: <b>py prepare_dataset.py</b> then <b>py train_model.py</b>.
+      Captured images will still be saved.
+    </div>
+    {% endif %}
+
+    <div class="grid">
+      <section class="card">
+        <h2>Live Camera</h2>
+        <div class="camera">
+          <video id="video" autoplay playsinline></video>
+          <div id="placeholder" class="placeholder">
+            Select a camera and click <b>Start Camera</b>.
+          </div>
+        </div>
+
+        <label class="camera-label" for="cameraSelect">Select Camera</label>
+        <select id="cameraSelect" class="camera-select">
+          <option value="">Detecting cameras...</option>
+        </select>
+
+        <div class="controls">
+          <button id="refreshCameraBtn" class="secondary" type="button">Refresh Cameras</button>
+          <button id="startBtn" class="primary" type="button">Start Camera</button>
+          <button id="stopBtn" class="danger" type="button" disabled>Stop Camera</button>
+          <button id="captureBtn" class="success" type="button" disabled>CAPTURE &amp; ANALYZE</button>
+        </div>
+
+        <p class="note">
+          Laptop webcam, USB webcam, and other browser cameras are supported.
+          Choose the camera that is aimed at the candled egg, then capture.
+          The original JPEG is stored on disk in the dataset captured folder.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>AI ANALYSIS RESULT</h2>
+        <div class="result-day" id="predictedDay">—</div>
+        <div class="result-rows">
+          <div class="result-row">
+            <small>Development Stage</small>
+            <strong id="developmentStage">Waiting for capture</strong>
+          </div>
+          <div class="result-row">
+            <small>AI Confidence</small>
+            <strong id="confidence">—</strong>
+          </div>
+          <div class="result-row">
+            <small>Status / Detection result</small>
+            <strong id="statusText">Capture an egg image to analyze.</strong>
+          </div>
+          <div class="result-row">
+            <small>Date &amp; Time</small>
+            <strong id="dateTime">—</strong>
+          </div>
+          <div class="result-row">
+            <small>Top predictions</small>
+            <ul class="top-list" id="topPredictions"></ul>
+          </div>
+          <div class="result-row">
+            <small>Captured Image</small>
+            <img id="capturedPreview" class="result-image" alt="Captured egg" hidden>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Dataset: {{ dataset_dir }} · Local Flask application
+  </footer>
+
+  <canvas id="canvas" style="display:none"></canvas>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
